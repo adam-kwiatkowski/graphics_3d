@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:graphics_3d/cube.dart';
+import 'package:graphics_3d/graphics_3d/cuboid.dart';
+import 'package:graphics_3d/math_3d/vector3.dart';
+import 'package:graphics_3d/widget_3d.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,14 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     //
@@ -50,21 +44,10 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           constraints: const BoxConstraints.expand(),
           child: RotatingCube(
-            // cube: Cube([
-            //   AffinePoint(-100, -100, -100, 1),
-            //   AffinePoint(100, -100, -100, 1),
-            //   AffinePoint(100, 100, -100, 1),
-            //   AffinePoint(-100, 100, -100, 1),
-            //   AffinePoint(-100, -100, 100, 1),
-            //   AffinePoint(100, -100, 100, 1),
-            //   AffinePoint(100, 100, 100, 1),
-            //   AffinePoint(-100, 100, 100, 1),
-            // ]),
-            cube: Cube.centered(200, AffinePoint(0, 0, 0, 1)),
+            cube: Cuboid(200, 200, 200, Vector3.zero()),
           ),
         ),
       ),
     );
   }
 }
-
