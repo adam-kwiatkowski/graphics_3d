@@ -20,7 +20,7 @@ class Cylinder extends Mesh {
 
     for (int i = 0; i < sides; i++) {
       triangles.add([0, 2 + 2 * i, 2 + 2 * ((i + 1) % sides)]);
-      triangles.add([1, 3 + 2 * i, 3 + 2 * ((i + 1) % sides)]);
+      triangles.add([1, 3 + 2 * ((i + 1) % sides), 3 + 2 * i]);
       triangles.add([2 + 2 * i, 3 + 2 * i, 3 + 2 * ((i + 1) % sides)]);
       triangles.add(
           [2 + 2 * i, 3 + 2 * ((i + 1) % sides), 2 + 2 * ((i + 1) % sides)]);

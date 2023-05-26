@@ -47,4 +47,8 @@ class Vector2 {
   Vector2 cross(Vector2 other) {
     return Vector2(x * other.y - y * other.x, 0);
   }
+
+  length() {
+    return sqrt(x * x + y * y);
+  }
 }
