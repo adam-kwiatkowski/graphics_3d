@@ -2,7 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:graphics_3d/graphics_3d/camera.dart';
+import 'package:graphics_3d/graphics_3d/cuboid.dart';
+import 'package:graphics_3d/graphics_3d/cylinder.dart';
 import 'package:graphics_3d/graphics_3d/mesh.dart';
+import 'package:graphics_3d/widgets/transformation_panel.dart';
+
+import 'math_3d/vector3.dart';
 
 class RotatingCube extends StatefulWidget {
   final Mesh cube;
@@ -15,17 +20,11 @@ class RotatingCube extends StatefulWidget {
 
 class _RotatingCubeState extends State<RotatingCube> {
   late Timer _timer;
-  final double _angle = 0.01;
   final Camera _camera = PerspectiveCamera(1000, 400, 300);
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
-      setState(() {
-        widget.cube.rotate(0, _angle, 0);
-      });
-    });
   }
 
   @override
@@ -38,46 +37,35 @@ class _RotatingCubeState extends State<RotatingCube> {
   Widget build(BuildContext context) {
     return Stack(children: [
       CustomPaint(
-        painter: CubePainter(_camera, [widget.cube]),
+        painter: CubePainter(_camera, [
+          widget.cube,
+          Cuboid(100, 100, 100, Vector3.zero()),
+          Cylinder(50, 150, 10, Vector3(300, -200, 0))
+        ]),
       ),
       Positioned(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('cx: ${(_camera as PerspectiveCamera).cx}'),
-          Slider(
-              value: (_camera as PerspectiveCamera).cx,
-              min: 0,
-              max: 800,
-              onChanged: (value) {
-                setState(() {
-                  (_camera as PerspectiveCamera).cx = value;
-                });
-              }),
-          Text('cy: ${(_camera as PerspectiveCamera).cy}'),
-          Slider(
-              value: (_camera as PerspectiveCamera).cy,
-              min: 0,
-              max: 800,
-              onChanged: (value) {
-                setState(() {
-                  (_camera as PerspectiveCamera).cy = value;
-                });
-              }),
-          Text('d: ${(_camera as PerspectiveCamera).d}'),
-          Slider(
-              value: (_camera as PerspectiveCamera).d,
-              min: 0,
-              max: 1000,
-              onChanged: (value) {
-                setState(() {
-                  (_camera as PerspectiveCamera).d = value;
-                });
-              }),
-        ],
-      )),
+        child: SizedBox(
+          width: 300,
+          height: 600,
+          child: TransformationPanel(
+            transform: widget.cube.transform,
+            onTransformChanged: (transform) {
+              setState(() {
+                widget.cube.transform = transform;
+              });
+            },
+          ),
+        ),
+      )
     ]);
   }
+}
+
+class Item {
+  String title;
+  bool isExpanded;
+
+  Item(this.title, this.isExpanded);
 }
 
 class CubePainter extends CustomPainter {

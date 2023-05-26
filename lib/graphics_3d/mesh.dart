@@ -1,5 +1,5 @@
+import 'package:graphics_3d/graphics_3d/transform.dart';
 import 'package:graphics_3d/math_3d/matrix.dart';
-import 'package:graphics_3d/math_3d/vector3.dart';
 import 'package:graphics_3d/math_3d/vector4.dart';
 
 abstract class Mesh {
@@ -7,8 +7,7 @@ abstract class Mesh {
   List<Vector4> normals = [];
   List<List<int>> triangles = [];
   List<List<int>> uv = [];
-
-  Vector3 position = Vector3(0, 0, 0);
+  Transform transform = Transform();
 
   void rotate(double angleX, double angleY, double angleZ) {
     vertices = vertices

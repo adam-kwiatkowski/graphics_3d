@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
           constraints: const BoxConstraints.expand(),
           child: RotatingCube(
-            cube: Cuboid(200, 200, 200, Vector3.zero()),
+            cube: Cuboid(200, 200, 200, Vector3(200, 0, 0)),
           ),
         ),
       ),

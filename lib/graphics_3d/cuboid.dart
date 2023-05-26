@@ -72,5 +72,7 @@ class Cuboid extends Mesh {
       Vector4(-1, 0, 0, 0),
       Vector4(-1, 0, 0, 0),
     ];
+
+    transform.position = position;
   }
 }

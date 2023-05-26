@@ -27,6 +27,9 @@ class PerspectiveCamera extends Camera {
 
   @override
   List<Vector2> project(Mesh mesh) {
-    return mesh.vertices.map(projectPoint).toList();
+    return mesh.vertices
+        .map(mesh.transform.transformPoint)
+        .map(projectPoint)
+        .toList();
   }
 }

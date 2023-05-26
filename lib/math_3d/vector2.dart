@@ -43,4 +43,8 @@ class Vector2 {
   String toString() {
     return 'Vector2{x: $x, y: $y}';
   }
+
+  Vector2 cross(Vector2 other) {
+    return Vector2(x * other.y - y * other.x, 0);
+  }
 }

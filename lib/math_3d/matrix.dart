@@ -149,3 +149,23 @@ class RotationMatrix extends Matrix {
           [0, 0, 0, 1],
         ]);
 }
+
+class TranslationMatrix extends Matrix {
+  TranslationMatrix(double x, double y, double z)
+      : super([
+          [1, 0, 0, x],
+          [0, 1, 0, y],
+          [0, 0, 1, z],
+          [0, 0, 0, 1],
+        ]);
+}
+
+class ScaleMatrix extends Matrix {
+  ScaleMatrix(double x, double y, double z)
+      : super([
+          [x, 0, 0, 0],
+          [0, y, 0, 0],
+          [0, 0, z, 0],
+          [0, 0, 0, 1],
+        ]);
+}

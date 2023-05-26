@@ -25,6 +25,31 @@ class Vector3 {
     return Vector3(x / scalar, y / scalar, z / scalar);
   }
 
+  double operator [](int index) {
+    switch (index) {
+      case 0:
+        return x;
+      case 1:
+        return y;
+      default:
+        return z;
+    }
+  }
+
+  void operator []=(int index, double value) {
+    switch (index) {
+      case 0:
+        x = value;
+        break;
+      case 1:
+        y = value;
+        break;
+      default:
+        z = value;
+        break;
+    }
+  }
+
   double dot(Vector3 other) {
     return x * other.x + y * other.y + z * other.z;
   }

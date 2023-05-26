@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:graphics_3d/graphics_3d/mesh.dart';
+import 'package:graphics_3d/math_3d/vector3.dart';
 import 'package:graphics_3d/math_3d/vector4.dart';
 
 class Cylinder extends Mesh {
-  Cylinder(double radius, double height, int sides) {
+  Cylinder(double radius, double height, int sides, Vector3 position) {
     vertices = [
       Vector4(0, 0, 0, 1),
       Vector4(0, height, 0, 1),
@@ -24,5 +25,7 @@ class Cylinder extends Mesh {
       triangles.add(
           [2 + 2 * i, 3 + 2 * ((i + 1) % sides), 2 + 2 * ((i + 1) % sides)]);
     }
+
+    transform.position = position;
   }
 }
