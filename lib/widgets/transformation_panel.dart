@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:graphics_3d/graphics_3d/transform.dart' as graphics_3d;
+import 'package:graphics_3d/graphics_3d/transform.dart' as t;
 import 'package:graphics_3d/math_3d/vector3.dart';
 
 class TransformationPanel extends StatefulWidget {
-  final graphics_3d.Transform transform;
-  final Function(graphics_3d.Transform) onTransformChanged;
+  final t.Transform transform;
+  final String title;
+  final Function(t.Transform) onTransformChanged;
 
   const TransformationPanel(
-      {super.key, required this.transform, required this.onTransformChanged});
+      {super.key, required this.transform, required this.onTransformChanged, this.title = 'Transform'});
 
   @override
   State<TransformationPanel> createState() => _TransformationPanelState();
@@ -38,10 +39,7 @@ class _TransformationPanelState extends State<TransformationPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4.0,
-      child: _buildPanel(),
-    );
+    return _buildPanel();
   }
 
   Widget _buildPanel() {
@@ -53,7 +51,7 @@ class _TransformationPanelState extends State<TransformationPanel> {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Text('Transform',
+              child: Text(widget.title,
                   style: Theme.of(context).textTheme.titleLarge),
             ),
             ExpansionPanelList(
@@ -73,9 +71,15 @@ class _TransformationPanelState extends State<TransformationPanel> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 16, 32),
                     child: Column(
                       children: [
-                        _buildVectorInput('X', item.vector, 0, item.index),
-                        _buildVectorInput('Y', item.vector, 1, item.index),
-                        _buildVectorInput('Z', item.vector, 2, item.index),
+                        VectorInput(label: 'X', item: item, onChanged: (vector) {
+                          widget.onTransformChanged(_updateTransform(item.index, vector));
+                        }, index: 0),
+                        VectorInput(label: 'Y', item: item, onChanged: (vector) {
+                          widget.onTransformChanged(_updateTransform(item.index, vector));
+                        }, index: 1),
+                        VectorInput(label: 'Z', item: item, onChanged: (vector) {
+                          widget.onTransformChanged(_updateTransform(item.index, vector));
+                        }, index: 2),
                       ],
                     ),
                   ),
@@ -89,33 +93,7 @@ class _TransformationPanelState extends State<TransformationPanel> {
     );
   }
 
-  Widget _buildVectorInput(
-      String label, Vector3 vector, int index, int valueIndex) {
-    return Row(
-      children: [
-        const SizedBox(width: 16.0),
-        Text('$label: '),
-        const SizedBox(width: 16.0),
-        Expanded(
-          child: TextFormField(
-            keyboardType: TextInputType.number,
-            initialValue: vector[index].toString(),
-            decoration: const InputDecoration(
-              labelText: 'Enter a value',
-            ),
-            onChanged: (value) {
-              setState(() {
-                vector[index] = double.tryParse(value) ?? 0.0;
-                widget.onTransformChanged(_updateTransform(valueIndex, vector));
-              });
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  graphics_3d.Transform _updateTransform(int index, Vector3 vector) {
+  t.Transform _updateTransform(int index, Vector3 vector) {
     switch (index) {
       case 0:
         widget.transform.localPosition = vector;
@@ -132,5 +110,65 @@ class _TransformationPanelState extends State<TransformationPanel> {
       default:
         return widget.transform;
     }
+  }
+}
+
+class VectorInput extends StatefulWidget {
+  final String label;
+  final Item item;
+  final int index;
+  final Function(Vector3) onChanged;
+
+  const VectorInput({Key? key, required this.label, required this.item, required this.onChanged, required this.index}) : super(key: key);
+
+  @override
+  State<VectorInput> createState() => _VectorInputState();
+}
+
+class _VectorInputState extends State<VectorInput> {
+  final controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.item.vector[widget.index].toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(width: 16.0),
+        Text('${widget.label}: '),
+        const SizedBox(width: 16.0),
+        Expanded(
+          child: Column(
+            children: [
+              TextFormField(
+                keyboardType: TextInputType.number,
+                controller: controller,
+                decoration: const InputDecoration(
+                  labelText: 'Enter a value',
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    widget.item.vector[widget.index] = double.tryParse(value) ?? 0.0;
+                    widget.onChanged(widget.item.vector);
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              Slider(value: widget.item.vector[widget.index], onChanged: (value) {
+                setState(() {
+                  widget.item.vector[widget.index] = value;
+                  controller.text = value.toString();
+                  widget.onChanged(widget.item.vector);
+                });
+              }, min: -600, max: 600,)
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
