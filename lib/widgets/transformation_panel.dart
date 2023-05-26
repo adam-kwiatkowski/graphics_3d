@@ -164,7 +164,7 @@ class _VectorInputState extends State<VectorInput> {
                   controller.text = value.toString();
                   widget.onChanged(widget.item.vector);
                 });
-              }, min: -600, max: 600,)
+              }, min: -1000, max: 1000,)
             ],
           ),
         ),

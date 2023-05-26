@@ -77,4 +77,6 @@ class Vector3 {
   }
 
   Vector3.zero() : this(0, 0, 0);
+
+  Vector3.up() : this(0, 1, 0);
 }

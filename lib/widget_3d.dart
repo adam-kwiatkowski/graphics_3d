@@ -5,6 +5,8 @@ import 'package:graphics_3d/graphics_3d/camera.dart';
 import 'package:graphics_3d/graphics_3d/cuboid.dart';
 import 'package:graphics_3d/graphics_3d/cylinder.dart';
 import 'package:graphics_3d/graphics_3d/mesh.dart';
+import 'package:graphics_3d/graphics_3d/transform.dart' as t;
+import 'package:graphics_3d/math_3d/vector2.dart';
 import 'package:graphics_3d/widgets/transformation_panel.dart';
 
 import 'math_3d/vector3.dart';
@@ -20,11 +22,17 @@ class RotatingCube extends StatefulWidget {
 
 class _RotatingCubeState extends State<RotatingCube> {
   late Timer _timer;
-  final Camera _camera = PerspectiveCamera(1000, 400, 300);
+  t.Transform cameraPosition = t.Transform();
+  t.Transform targetPosition = t.Transform();
+  double fov = 90;
+  late final Camera _camera = PerspectiveCamera(
+      cameraPosition, targetPosition, Vector3.up(), Vector2(800, 600), fov);
 
   @override
   void initState() {
     super.initState();
+    cameraPosition.position = Vector3(-20, 0, 200);
+    targetPosition.position = Vector3.zero();
   }
 
   @override
@@ -35,25 +43,60 @@ class _RotatingCubeState extends State<RotatingCube> {
 
   @override
   Widget build(BuildContext context) {
+    _camera.viewportSize = Vector2(
+        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return Stack(children: [
       CustomPaint(
         painter: CubePainter(_camera, [
           widget.cube,
           Cuboid(100, 100, 100, Vector3.zero()),
-          Cylinder(50, 150, 10, Vector3(300, -200, 0))
+          Cylinder(50, 150, 10, Vector3(300, -200, 0)),
+          Cuboid(10, 10, 10, targetPosition.position),
+          Cuboid(10, 10, 10, cameraPosition.position)
         ]),
       ),
       Positioned(
         child: SizedBox(
           width: 300,
           height: 600,
-          child: TransformationPanel(
-            transform: widget.cube.transform,
-            onTransformChanged: (transform) {
-              setState(() {
-                widget.cube.transform = transform;
-              });
-            },
+          child: Card(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TransformationPanel(
+                    title: 'Cube transform',
+                    transform: widget.cube.transform,
+                    onTransformChanged: (transform) {
+                      setState(() {
+                        widget.cube.transform = transform;
+                      });
+                    },
+                  ),
+                  TransformationPanel(
+                      title: 'Camera position',
+                      transform: cameraPosition,
+                      onTransformChanged: (transform) {
+                        setState(() {
+                          cameraPosition = transform;
+                        });
+                      }),
+                  TransformationPanel(
+                      title: 'Camera target',
+                      transform: targetPosition,
+                      onTransformChanged: (transform) {
+                        setState(() {
+                          targetPosition = transform;
+                        });
+                      }),
+                  Slider(value: fov, onChanged: (value) {
+                    setState(() {
+                      fov = value;
+                      (_camera as PerspectiveCamera).fov = fov;
+                    });
+                  }, min: 0, max: 360,)
+                ],
+              ),
+            ),
           ),
         ),
       )
