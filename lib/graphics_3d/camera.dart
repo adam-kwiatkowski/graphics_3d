@@ -23,9 +23,9 @@ abstract class Camera {
     Vector3 y = z.cross(x).normalized;
 
     return Matrix([
-      [x.x, x.y, x.z, -x.dot(transform.position)],
-      [y.x, y.y, y.z, -y.dot(transform.position)],
-      [z.x, z.y, z.z, -z.dot(transform.position)],
+      [x.x, x.y, x.z, x.dot(transform.position)],
+      [y.x, y.y, y.z, y.dot(transform.position)],
+      [z.x, z.y, z.z, z.dot(transform.position)],
       [0, 0, 0, 1],
     ]);
   }
@@ -34,7 +34,7 @@ abstract class Camera {
 class Projection {
   List<Vector4> worldPoints;
   List<Vector4> normals;
-  List<Vector2> screenPoints;
+  List<Vector4> screenPoints;
 
   Projection(this.worldPoints, this.normals, this.screenPoints);
 }
@@ -51,10 +51,12 @@ class PerspectiveCamera extends Camera {
     cy = viewportSize.y / 2;
   }
 
-  Vector2 projectPoint(Vector4 point) {
-    return Vector2(
+  Vector4 projectPoint(Vector4 point) {
+    return Vector4(
       cx + d * point.x / (d - point.z),
       cy + d * point.y / (d - point.z),
+      0,
+      0,
     );
   }
 
@@ -85,7 +87,6 @@ class PerspectiveCamera extends Camera {
         projectionPoints.map((point) => point / point.w).toList();
 
     // return viewPoints.map((point) => projectPoint(point)).toList();
-    return Projection(worldPoints, mesh.normals,
-        viewPoints.map((point) => projectPoint(point)).toList());
+    return Projection(worldPoints, mesh.normals, projectionPoints);
   }
 }

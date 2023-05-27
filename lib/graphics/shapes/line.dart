@@ -214,18 +214,6 @@ class Line extends Shape {
     this.offset += offset;
   }
 
-  static Shape? fromJson(Map<String, dynamic> json) {
-    if (json['type'] == 'line') {
-      return Line(
-        Offset(json['start']['dx'], json['start']['dy']),
-        Offset(json['end']['dx'], json['end']['dy']),
-        outlineColor: Color(json['color']),
-        thickness: json['thickness'],
-      );
-    }
-    return null;
-  }
-
   @override
   void accept(ShapeVisitor visitor) {
     visitor.visitLine(this);

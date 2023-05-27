@@ -78,35 +78,26 @@ class Cuboid extends Mesh {
 
     // texture is in the form of a 3x2 grid
     uv = [
-      // front
-      Vector2(0, 1 / 2),
-      Vector2(1 / 3, 1 / 2),
-      Vector2(1 / 3, 1),
-      Vector2(1 / 3, 1),
-
-      // back
-      Vector2(1 / 3, 1 / 2),
-      Vector2(2 / 3, 1 / 2),
-      Vector2(2 / 3, 1),
-      Vector2(2 / 3, 1),
-
-      // top
+      Vector2(0, 0),
       Vector2(1 / 3, 0),
       Vector2(2 / 3, 0),
-      Vector2(2 / 3, 1 / 2),
-      Vector2(2 / 3, 1 / 2),
-
-      // bottom
+      Vector2(1, 0),
+      Vector2(0, 1 / 2),
       Vector2(1 / 3, 1 / 2),
       Vector2(2 / 3, 1 / 2),
+      Vector2(1, 1 / 2),
+      Vector2(0, 1),
+      Vector2(1 / 3, 1),
       Vector2(2 / 3, 1),
-      Vector2(2 / 3, 1),
-
-      // left
+      Vector2(1, 1),
+      Vector2(0, 1 / 2),
+      Vector2(1 / 3, 1 / 2),
       Vector2(2 / 3, 1 / 2),
       Vector2(1, 1 / 2),
-      Vector2(1, 1),
-      Vector2(1, 1),
+      Vector2(0, 0),
+      Vector2(1 / 3, 0),
+      Vector2(2 / 3, 0),
+      Vector2(1, 0),
     ];
   }
 }

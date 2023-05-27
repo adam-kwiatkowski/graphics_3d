@@ -6,7 +6,7 @@ import 'package:graphics_3d/graphics_3d/cylinder.dart';
 import 'package:graphics_3d/graphics_3d/object_3d.dart';
 import 'package:graphics_3d/graphics_3d/texture.dart' as g3;
 import 'package:graphics_3d/math_3d/vector3.dart';
-import 'package:graphics_3d/widget_3d.dart';
+import 'package:graphics_3d/widgets/widget_3d.dart';
 
 void main() {
   runApp(const MyApp());
@@ -114,7 +114,7 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
           image.toByteData().then((data) {
             var texture = g3.Texture(data!.buffer.asUint8List(), width, height);
             setState(() {
-              // cylinder.texture = texture;
+              cylinder.texture = texture;
               cube.texture = texture;
             });
           });

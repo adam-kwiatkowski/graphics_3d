@@ -43,29 +43,7 @@ class Triangle extends Shape {
       fillTriangle(point1, point2, point3, pixels, size, (x, y) => fillColor!);
     } else if (texture != null && uvs != null) {
       fillTriangle(point1, point2, point3, pixels, size, (x, y) {
-        final w1 = ((point2.dy - point3.dy) * (x - point3.dx) +
-                (point3.dx - point2.dx) * (y - point3.dy)) /
-            ((point2.dy - point3.dy) * (point1.dx - point3.dx) +
-                (point3.dx - point2.dx) * (point1.dy - point3.dy));
-        final w2 = ((point3.dy - point1.dy) * (x - point3.dx) +
-                (point1.dx - point3.dx) * (y - point3.dy)) /
-            ((point2.dy - point3.dy) * (point1.dx - point3.dx) +
-                (point3.dx - point2.dx) * (point1.dy - point3.dy));
-        final w3 = 1 - w1 - w2;
-
-        final uv1 = uvs![0];
-        final uv2 = uvs![1];
-        final uv3 = uvs![2];
-
-        if (w1 < 0 || w2 < 0 || w3 < 0) {
-          return Color(0x00000000);
-        }
-
-        final u = uv1.x * w1 + uv2.x * w2 + uv3.x * w3;
-        final v = uv1.y * w1 + uv2.y * w2 + uv3.y * w3;
-
-        return Color.fromARGB(255, (u * 255).round(), (v * 255).round(),
-            ((1 - (u + v)) * 255).round());
+        return const Color(0xffff0000);
       });
     }
   }

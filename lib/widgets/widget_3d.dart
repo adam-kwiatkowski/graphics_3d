@@ -2,17 +2,18 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:graphics_3d/graphics/shapes/triangle.dart';
+import 'package:graphics_3d/graphics/shapes/mesh_triangle.dart';
 import 'package:graphics_3d/graphics_3d/camera.dart';
 import 'package:graphics_3d/graphics_3d/cuboid.dart';
 import 'package:graphics_3d/graphics_3d/object_3d.dart';
 import 'package:graphics_3d/graphics_3d/transform.dart' as t;
 import 'package:graphics_3d/math_3d/vector2.dart';
+import 'package:graphics_3d/math_3d/vector4.dart';
 import 'package:graphics_3d/widgets/objectinfo_panel.dart';
 import 'package:graphics_3d/widgets/transformation_panel.dart';
 
-import 'graphics/drawing.dart';
-import 'math_3d/vector3.dart';
+import '../graphics/drawing.dart';
+import '../math_3d/vector3.dart';
 
 class Renderer3D extends StatefulWidget {
   final List<Object3D> objects;
@@ -37,8 +38,14 @@ class _Renderer3DState extends State<Renderer3D> {
   @override
   void initState() {
     super.initState();
-    cameraPosition.position = Vector3(0, -200, 400);
+    cameraPosition.position = Vector3(0, 200, -400);
     targetPosition.position = Vector3.zero();
+
+    // _timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+    //   setState(() {
+    //     widget.objects[2].mesh.rotate(0.1, 0.05, 0.1);
+    //   });
+    // });
   }
 
   @override
@@ -117,6 +124,7 @@ class _Renderer3DState extends State<Renderer3D> {
                             targetPosition = transform;
                           });
                         }),
+                    Text('Fov: $fov'),
                     Slider(
                       value: fov,
                       onChanged: (value) {
@@ -125,8 +133,8 @@ class _Renderer3DState extends State<Renderer3D> {
                           (_camera as PerspectiveCamera).fov = fov;
                         });
                       },
-                      min: 0,
-                      max: 360,
+                      min: 1,
+                      max: 180,
                     )
                   ],
                 ),
@@ -171,10 +179,10 @@ class _Renderer3DState extends State<Renderer3D> {
 
 Future<ui.Image> renderDrawing(
     Drawing drawing, List<Object3D> objects, Camera camera) {
-  Triangle makeTriangle(Vector2 a, Vector2 b, Vector2 c,
+  MeshTriangle makeTriangle(Vector4 a, Vector4 b, Vector4 c,
       {ui.Color outlineColor = Colors.black, ui.Color? fillColor}) {
-    return Triangle(
-        ui.Offset(a.x, a.y), ui.Offset(b.x, b.y), ui.Offset(c.x, c.y),
+    return MeshTriangle(
+        Vector3(a.x, a.y, a.z), Vector3(b.x, b.y, b.z), Vector3(c.x, c.y, c.z),
         outlineColor: outlineColor, fillColor: fillColor);
   }
 
@@ -188,29 +196,27 @@ Future<ui.Image> renderDrawing(
       var b = projectedPoints[triangle[2]] - projectedPoints[triangle[0]];
 
       var cross = Vector3(a.x, a.y, 0).cross(Vector3(b.x, b.y, 0));
-      if (cross.z < 0) {
+      if (cross.z <= 0) {
         continue;
       }
 
       if (object.texture != null) {
-        // drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
-        //     projectedPoints[triangle[1]], projectedPoints[triangle[2]],
-        //     fillColor: object.texture!.getColor(0, 0),
-        //     outlineColor: object.texture!.getColor(0, 0)), antialias: false);
-        // drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
-        //     projectedPoints[triangle[1]], projectedPoints[triangle[2]],
-        //     outlineColor: object.texture!.getColor(0, 0)), antialias: true);
         var p1 = projectedPoints[triangle[0]];
         var p2 = projectedPoints[triangle[1]];
         var p3 = projectedPoints[triangle[2]];
-        drawing.drawTriangle(Triangle.withTexture(Offset(p1.x, p1.y),
-            Offset(p2.x, p2.y), Offset(p3.x, p3.y), object.texture!, [
-          object.mesh.uv[triangle[0]],
-          object.mesh.uv[triangle[1]],
-          object.mesh.uv[triangle[2]]
-        ]));
+        drawing.drawShape(
+          MeshTriangle.withTexture(
+              Vector3(p1.x, p1.y, p1.z),
+              Vector3(p2.x, p2.y, p2.z),
+              Vector3(p3.x, p3.y, p3.z),
+              object.texture, [
+            object.mesh.uv[triangle[0]],
+            object.mesh.uv[triangle[1]],
+            object.mesh.uv[triangle[2]]
+          ]),
+        );
       } else {
-        drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
+        drawing.drawShape(makeTriangle(projectedPoints[triangle[0]],
             projectedPoints[triangle[1]], projectedPoints[triangle[2]]));
       }
     }

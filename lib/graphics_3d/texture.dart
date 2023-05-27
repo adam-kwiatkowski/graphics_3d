@@ -1,7 +1,7 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/foundation.dart';
 
 class Texture {
   Uint8List data;
@@ -22,9 +22,11 @@ class Texture {
       int y = (v * (height - 1)).round();
       return getColor(x, y);
     } catch (e) {
-      print('Error: $e, u: $u, v: $v');
+      if (kDebugMode) {
+        print('Error: $e, u: $u, v: $v');
+      }
     }
-    return Color(0);
+    return const Color(0x00000000);
   }
 
   void load(XFile file) async {

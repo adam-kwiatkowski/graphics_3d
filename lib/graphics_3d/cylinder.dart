@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:graphics_3d/graphics_3d/mesh.dart';
+import 'package:graphics_3d/math_3d/vector2.dart';
 import 'package:graphics_3d/math_3d/vector3.dart';
 import 'package:graphics_3d/math_3d/vector4.dart';
 
@@ -25,6 +26,17 @@ class Cylinder extends Mesh {
       triangles.add(
           [2 + 2 * i, 3 + 2 * ((i + 1) % sides), 2 + 2 * ((i + 1) % sides)]);
     }
+
+    // uv
+    uv = [
+      Vector2(0.25, 0.25),
+    ];
+    for (int i = 0; i < sides; i++) {
+      double angle = i * 2 * pi / sides;
+      uv.add(Vector2(0.25 + 0.25 * cos(angle), 0.25 + 0.25 * sin(angle)));
+      uv.add(Vector2(0.75 + 0.25 * cos(angle), 0.25 + 0.25 * sin(angle)));
+    }
+    uv.add(Vector2(0.75, 0.25));
 
     transform.position = position;
   }

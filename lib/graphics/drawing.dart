@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:graphics_3d/graphics/shapes/shape.dart';
 import 'package:graphics_3d/graphics/shapes/triangle.dart';
 
 import 'shapes/line.dart';
@@ -38,6 +39,11 @@ class Drawing {
   void drawTriangle(Triangle triangle, {bool? antialias}) {
     var aa = antialias ?? this.antialias;
     triangle.draw(pixels, size, antiAlias: aa);
+  }
+
+  void drawShape(Shape shape, {bool? antialias}) {
+    var aa = antialias ?? this.antialias;
+    shape.draw(pixels, size, antiAlias: aa);
   }
 
   void clear({ui.Color? clearColor}) {
