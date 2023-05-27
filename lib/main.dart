@@ -77,6 +77,7 @@ class TexturedCylinder extends StatefulWidget {
 
 class _TexturedCylinderState extends State<TexturedCylinder> {
   late Object3D cylinder;
+  late Object3D cube;
   XFile? image;
   bool isDragging = false;
 
@@ -85,6 +86,7 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
     super.initState();
     cylinder = Object3D(Cylinder(widget.radius, widget.height, widget.sides,
         Vector3.zero() - Vector3(0, widget.height / 2, 0)));
+    cube = Object3D(Cuboid(100, 100, 100, Vector3(150, 0, 0)));
   }
 
   @override
@@ -112,13 +114,14 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
           image.toByteData().then((data) {
             var texture = g3.Texture(data!.buffer.asUint8List(), width, height);
             setState(() {
-              cylinder.texture = texture;
+              // cylinder.texture = texture;
+              cube.texture = texture;
             });
           });
         });
         print('Dropped ${details.files.first.name}');
       },
-      child: Renderer3D(objects: widget.otherObjects + [cylinder]),
+      child: Renderer3D(objects: widget.otherObjects + [cylinder, cube]),
     );
   }
 }

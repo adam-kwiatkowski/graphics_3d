@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:graphics_3d/graphics/shapes/triangle.dart';
 import 'package:graphics_3d/graphics_3d/camera.dart';
 import 'package:graphics_3d/graphics_3d/cuboid.dart';
 import 'package:graphics_3d/graphics_3d/object_3d.dart';
@@ -9,6 +11,7 @@ import 'package:graphics_3d/math_3d/vector2.dart';
 import 'package:graphics_3d/widgets/objectinfo_panel.dart';
 import 'package:graphics_3d/widgets/transformation_panel.dart';
 
+import 'graphics/drawing.dart';
 import 'math_3d/vector3.dart';
 
 class Renderer3D extends StatefulWidget {
@@ -46,21 +49,35 @@ class _Renderer3DState extends State<Renderer3D> {
 
   @override
   Widget build(BuildContext context) {
-    _camera.viewportSize = Vector2(
-        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+    ui.Size size = MediaQuery.of(context).size;
+    final Drawing drawing = Drawing(size);
+    drawing.clear(clearColor: Colors.white);
+
+    _camera.viewportSize = Vector2(size.width, size.height);
     return Stack(children: [
-      CustomPaint(
-        painter: CubePainter(
-          _camera,
-          widget.objects +
-              [
-                if (drawCameraTarget)
-                  Object3D(
-                    Cuboid(10, 10, 10, targetPosition.position),
-                  ),
-              ],
-          drawVertexIndices: drawVertexIndices,
-        ),
+      FutureBuilder<ui.Image>(
+        future: renderDrawing(
+            drawing,
+            widget.objects +
+                [
+                  if (drawCameraTarget)
+                    Object3D(
+                      Cuboid(10, 10, 10, targetPosition.position),
+                    ),
+                ],
+            _camera),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return RawImage(
+              image: snapshot.data!,
+              width: size.width,
+              height: size.height,
+              fit: BoxFit.fill,
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
       ),
       Positioned(
         child: Padding(
@@ -152,80 +169,59 @@ class _Renderer3DState extends State<Renderer3D> {
   }
 }
 
+Future<ui.Image> renderDrawing(
+    Drawing drawing, List<Object3D> objects, Camera camera) {
+  Triangle makeTriangle(Vector2 a, Vector2 b, Vector2 c,
+      {ui.Color outlineColor = Colors.black, ui.Color? fillColor}) {
+    return Triangle(
+        ui.Offset(a.x, a.y), ui.Offset(b.x, b.y), ui.Offset(c.x, c.y),
+        outlineColor: outlineColor, fillColor: fillColor);
+  }
+
+  for (var object in objects) {
+    final mesh = object.mesh;
+    final projection = camera.project(mesh);
+    final projectedPoints = projection.screenPoints;
+
+    for (var triangle in mesh.triangles) {
+      var a = projectedPoints[triangle[1]] - projectedPoints[triangle[0]];
+      var b = projectedPoints[triangle[2]] - projectedPoints[triangle[0]];
+
+      var cross = Vector3(a.x, a.y, 0).cross(Vector3(b.x, b.y, 0));
+      if (cross.z < 0) {
+        continue;
+      }
+
+      if (object.texture != null) {
+        // drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
+        //     projectedPoints[triangle[1]], projectedPoints[triangle[2]],
+        //     fillColor: object.texture!.getColor(0, 0),
+        //     outlineColor: object.texture!.getColor(0, 0)), antialias: false);
+        // drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
+        //     projectedPoints[triangle[1]], projectedPoints[triangle[2]],
+        //     outlineColor: object.texture!.getColor(0, 0)), antialias: true);
+        var p1 = projectedPoints[triangle[0]];
+        var p2 = projectedPoints[triangle[1]];
+        var p3 = projectedPoints[triangle[2]];
+        drawing.drawTriangle(Triangle.withTexture(Offset(p1.x, p1.y),
+            Offset(p2.x, p2.y), Offset(p3.x, p3.y), object.texture!, [
+          object.mesh.uv[triangle[0]],
+          object.mesh.uv[triangle[1]],
+          object.mesh.uv[triangle[2]]
+        ]));
+      } else {
+        drawing.drawTriangle(makeTriangle(projectedPoints[triangle[0]],
+            projectedPoints[triangle[1]], projectedPoints[triangle[2]]));
+      }
+    }
+  }
+
+  return drawing.toImage();
+}
+
 class Item {
   String title;
   bool isExpanded;
 
   Item(this.title, this.isExpanded);
-}
-
-class CubePainter extends CustomPainter {
-  final Camera _camera;
-  final List<Object3D> _objects;
-  final bool drawVertexIndices;
-
-  CubePainter(this._camera, this._objects, {this.drawVertexIndices = false});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.black
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-
-    for (var object in _objects) {
-      final mesh = object.mesh;
-      final projection = _camera.project(mesh);
-      final projectedPoints = projection.screenPoints;
-
-      for (var triangle in mesh.triangles) {
-        var a = projectedPoints[triangle[1]] - projectedPoints[triangle[0]];
-        var b = projectedPoints[triangle[2]] - projectedPoints[triangle[0]];
-
-        var cross = Vector3(a.x, a.y, 0).cross(Vector3(b.x, b.y, 0));
-        if (cross.z < 0) {
-          continue;
-        }
-
-        canvas.drawPath(
-            Path()
-              ..moveTo(projectedPoints[triangle[0]].x,
-                  projectedPoints[triangle[0]].y)
-              ..lineTo(projectedPoints[triangle[1]].x,
-                  projectedPoints[triangle[1]].y)
-              ..lineTo(projectedPoints[triangle[2]].x,
-                  projectedPoints[triangle[2]].y)
-              ..close(),
-            paint);
-      }
-
-      if (drawVertexIndices) {
-        var visited = List<Vector2>.empty(growable: true);
-        for (var i = 0; i < projectedPoints.length; i++) {
-          var point = projectedPoints[i];
-
-          for (var j = 0; j < visited.length; j++) {
-            if ((visited[j] - point).length() < 10) {
-              point = Vector2(point.x, point.y + 10);
-            }
-          }
-
-          visited.add(point);
-
-          var textPainter = TextPainter(
-              text: TextSpan(
-                  text: i.toString(),
-                  style: const TextStyle(color: Colors.black, fontSize: 10)),
-              textDirection: TextDirection.ltr);
-          textPainter.layout();
-          textPainter.paint(canvas, Offset(point.x, point.y));
-        }
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
 }

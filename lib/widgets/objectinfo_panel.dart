@@ -22,7 +22,28 @@ class ObjectInfoPanel extends StatelessWidget {
               Text('${object.mesh}',
                   style: Theme.of(context).textTheme.titleLarge),
               Text('Vertices: ${object.mesh.vertices.length}'),
-              Text('Texture: ${object.texture}'),
+              Row(
+                children: [
+                  Text('Texture: ${object.texture}'),
+                  const SizedBox(width: 8),
+                  if (object.texture != null)
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(8),
+                        minimumSize: const Size(0, 0),
+                        foregroundColor: Colors.red,
+                      ),
+                      child: const Text(
+                        'Remove',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        object.texture = null;
+                        onObjectChanged(object);
+                      },
+                    )
+                ],
+              ),
             ],
           ),
         ),

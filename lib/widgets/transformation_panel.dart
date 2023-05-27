@@ -8,7 +8,10 @@ class TransformationPanel extends StatefulWidget {
   final Function(t.Transform) onTransformChanged;
 
   const TransformationPanel(
-      {super.key, required this.transform, required this.onTransformChanged, this.title = 'Transform'});
+      {super.key,
+      required this.transform,
+      required this.onTransformChanged,
+      this.title = 'Transform'});
 
   @override
   State<TransformationPanel> createState() => _TransformationPanelState();
@@ -71,15 +74,30 @@ class _TransformationPanelState extends State<TransformationPanel> {
                     padding: const EdgeInsets.fromLTRB(0, 0, 16, 32),
                     child: Column(
                       children: [
-                        VectorInput(label: 'X', item: item, onChanged: (vector) {
-                          widget.onTransformChanged(_updateTransform(item.index, vector));
-                        }, index: 0),
-                        VectorInput(label: 'Y', item: item, onChanged: (vector) {
-                          widget.onTransformChanged(_updateTransform(item.index, vector));
-                        }, index: 1),
-                        VectorInput(label: 'Z', item: item, onChanged: (vector) {
-                          widget.onTransformChanged(_updateTransform(item.index, vector));
-                        }, index: 2),
+                        VectorInput(
+                            label: 'X',
+                            item: item,
+                            onChanged: (vector) {
+                              widget.onTransformChanged(
+                                  _updateTransform(item.index, vector));
+                            },
+                            index: 0),
+                        VectorInput(
+                            label: 'Y',
+                            item: item,
+                            onChanged: (vector) {
+                              widget.onTransformChanged(
+                                  _updateTransform(item.index, vector));
+                            },
+                            index: 1),
+                        VectorInput(
+                            label: 'Z',
+                            item: item,
+                            onChanged: (vector) {
+                              widget.onTransformChanged(
+                                  _updateTransform(item.index, vector));
+                            },
+                            index: 2),
                       ],
                     ),
                   ),
@@ -119,7 +137,13 @@ class VectorInput extends StatefulWidget {
   final int index;
   final Function(Vector3) onChanged;
 
-  const VectorInput({Key? key, required this.label, required this.item, required this.onChanged, required this.index}) : super(key: key);
+  const VectorInput(
+      {Key? key,
+      required this.label,
+      required this.item,
+      required this.onChanged,
+      required this.index})
+      : super(key: key);
 
   @override
   State<VectorInput> createState() => _VectorInputState();
@@ -152,19 +176,25 @@ class _VectorInputState extends State<VectorInput> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    widget.item.vector[widget.index] = double.tryParse(value) ?? 0.0;
+                    widget.item.vector[widget.index] =
+                        double.tryParse(value) ?? 0.0;
                     widget.onChanged(widget.item.vector);
                   });
                 },
               ),
               const SizedBox(height: 16.0),
-              Slider(value: widget.item.vector[widget.index], onChanged: (value) {
-                setState(() {
-                  widget.item.vector[widget.index] = value;
-                  controller.text = value.toString();
-                  widget.onChanged(widget.item.vector);
-                });
-              }, min: -1000, max: 1000,)
+              Slider(
+                value: widget.item.vector[widget.index],
+                onChanged: (value) {
+                  setState(() {
+                    widget.item.vector[widget.index] = value;
+                    controller.text = value.toString();
+                    widget.onChanged(widget.item.vector);
+                  });
+                },
+                min: -1000,
+                max: 1000,
+              )
             ],
           ),
         ),

@@ -10,10 +10,21 @@ class Texture {
 
   Texture(this.data, this.width, this.height);
 
-  Color getPixel(int x, int y) {
+  Color getColor(int x, int y) {
     int index = (y * width + x) * 4;
     return Color.fromARGB(
         data[index + 3], data[index], data[index + 1], data[index + 2]);
+  }
+
+  Color getUV(double u, double v) {
+    try {
+      int x = (u * (width - 1)).round();
+      int y = (v * (height - 1)).round();
+      return getColor(x, y);
+    } catch (e) {
+      print('Error: $e, u: $u, v: $v');
+    }
+    return Color(0);
   }
 
   void load(XFile file) async {

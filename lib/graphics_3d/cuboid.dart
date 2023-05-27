@@ -76,6 +76,7 @@ class Cuboid extends Mesh {
 
     transform.position = position;
 
+    // texture is in the form of a 3x2 grid
     uv = [
       // front
       Vector2(0, 1 / 2),
