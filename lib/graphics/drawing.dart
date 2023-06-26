@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:graphics_3d/graphics/shapes/digit.dart';
 import 'package:graphics_3d/graphics/shapes/shape.dart';
 import 'package:graphics_3d/graphics/shapes/triangle.dart';
 
@@ -44,6 +45,15 @@ class Drawing {
   void drawShape(Shape shape, {bool? antialias}) {
     var aa = antialias ?? this.antialias;
     shape.draw(pixels, size, antiAlias: aa);
+  }
+
+  void drawNumber(int value, ui.Offset start,
+      {Color? outlineColor, ui.Offset? digitSize, int? spacing}) {
+    var number = Number(value, start,
+        outlineColor: outlineColor ?? Colors.black,
+        digitSize: digitSize ?? const ui.Offset(5, 5),
+        spacing: spacing ?? 0);
+    number.draw(pixels, size);
   }
 
   void clear({ui.Color? clearColor}) {

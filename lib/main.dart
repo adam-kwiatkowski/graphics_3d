@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:graphics_3d/graphics_3d/cuboid.dart';
 import 'package:graphics_3d/graphics_3d/cylinder.dart';
 import 'package:graphics_3d/graphics_3d/object_3d.dart';
+import 'package:graphics_3d/graphics_3d/plane.dart';
 import 'package:graphics_3d/graphics_3d/texture.dart' as g3;
 import 'package:graphics_3d/math_3d/vector3.dart';
 import 'package:graphics_3d/widgets/widget_3d.dart';
@@ -78,6 +79,7 @@ class TexturedCylinder extends StatefulWidget {
 class _TexturedCylinderState extends State<TexturedCylinder> {
   late Object3D cylinder;
   late Object3D cube;
+  late Object3D plane;
   XFile? image;
   bool isDragging = false;
 
@@ -87,6 +89,7 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
     cylinder = Object3D(Cylinder(widget.radius, widget.height, widget.sides,
         Vector3.zero() - Vector3(0, widget.height / 2, 0)));
     cube = Object3D(Cuboid(100, 100, 100, Vector3(150, 0, 0)));
+    plane = Object3D(Plane(100, 100, Vector3(100, -100, 0)));
   }
 
   @override
@@ -116,12 +119,16 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
             setState(() {
               cylinder.texture = texture;
               cube.texture = texture;
+              plane.texture = texture;
             });
           });
         });
-        print('Dropped ${details.files.first.name}');
       },
-      child: Renderer3D(objects: widget.otherObjects + [cylinder, cube]),
+      child: Renderer3D(objects: widget.otherObjects + [
+        // cylinder,
+        cube,
+        plane
+      ]),
     );
   }
 }

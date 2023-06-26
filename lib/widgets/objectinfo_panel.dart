@@ -44,6 +44,22 @@ class ObjectInfoPanel extends StatelessWidget {
                     )
                 ],
               ),
+
+              Row(
+                  children: [
+                    const Text('Visible'),
+                    Transform.scale(
+                      scale: 0.5,
+                      child: Switch(
+                        value: object.visible,
+                        onChanged: (value) {
+                          object.visible = value;
+                          onObjectChanged(object);
+                        },
+                      ),
+                    ),
+                  ]
+              ),
             ],
           ),
         ),

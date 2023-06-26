@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:graphics_3d/graphics_3d/transform.dart' as t;
 import 'package:graphics_3d/math_3d/vector3.dart';
@@ -21,9 +23,11 @@ class Item {
   final String title;
   bool isExpanded;
   Vector3 vector;
-  int index = 0;
+  int index;
+  double min;
+  double max;
 
-  Item(this.title, this.isExpanded, this.vector, [this.index = 0]);
+  Item(this.title, this.isExpanded, this.vector, [this.index = 0, this.min = -1000, this.max = 1000]);
 }
 
 class _TransformationPanelState extends State<TransformationPanel> {
@@ -35,8 +39,8 @@ class _TransformationPanelState extends State<TransformationPanel> {
     _items = [
       Item('Local Position', false, widget.transform.localPosition, 0),
       Item('Position', false, widget.transform.position, 1),
-      Item('Rotation', false, widget.transform.rotation, 2),
-      Item('Scale', false, widget.transform.scale, 3),
+      Item('Rotation', false, widget.transform.rotation, 2, -pi, pi),
+      Item('Scale', false, widget.transform.scale, 3, 0, 10),
     ];
   }
 
@@ -192,8 +196,8 @@ class _VectorInputState extends State<VectorInput> {
                     widget.onChanged(widget.item.vector);
                   });
                 },
-                min: -1000,
-                max: 1000,
+                min: widget.item.min,
+                max: widget.item.max,
               )
             ],
           ),

@@ -38,8 +38,8 @@ class _Renderer3DState extends State<Renderer3D> {
   @override
   void initState() {
     super.initState();
-    cameraPosition.position = Vector3(0, 200, -400);
-    targetPosition.position = Vector3.zero();
+    cameraPosition.position = Vector3(-150, 50, -400);
+    targetPosition.position = Vector3(-150, 50, 0);
 
     // _timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
     //   setState(() {
@@ -72,7 +72,7 @@ class _Renderer3DState extends State<Renderer3D> {
                       Cuboid(10, 10, 10, targetPosition.position),
                     ),
                 ],
-            _camera),
+            _camera, drawVertexIndices),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return RawImage(
@@ -90,7 +90,7 @@ class _Renderer3DState extends State<Renderer3D> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
-            width: 300,
+            width: 320,
             height: 600,
             child: Card(
               child: SingleChildScrollView(
@@ -178,7 +178,8 @@ class _Renderer3DState extends State<Renderer3D> {
 }
 
 Future<ui.Image> renderDrawing(
-    Drawing drawing, List<Object3D> objects, Camera camera) {
+    Drawing drawing, List<Object3D> objects, Camera camera, bool drawVertexIndices) {
+
   MeshTriangle makeTriangle(Vector4 a, Vector4 b, Vector4 c,
       {ui.Color outlineColor = Colors.black, ui.Color? fillColor}) {
     return MeshTriangle(
@@ -187,9 +188,18 @@ Future<ui.Image> renderDrawing(
   }
 
   for (var object in objects) {
+    if (!object.visible) {
+      continue;
+    }
+
     final mesh = object.mesh;
     final projection = camera.project(mesh);
     final projectedPoints = projection.screenPoints;
+
+    // dictionary that keeps track of projected points for which the vertex index has already been drawn
+    final drawnVertexIndices = <Vector4, int>{};
+    var colors = [Colors.red, Colors.green, Colors.blue, Colors.purple, Colors.orange];
+    var colorIndex = 0;
 
     for (var triangle in mesh.triangles) {
       var a = projectedPoints[triangle[1]] - projectedPoints[triangle[0]];
@@ -218,6 +228,24 @@ Future<ui.Image> renderDrawing(
       } else {
         drawing.drawShape(makeTriangle(projectedPoints[triangle[0]],
             projectedPoints[triangle[1]], projectedPoints[triangle[2]]));
+      }
+
+      if (drawVertexIndices) {
+        var color = colors[colorIndex % colors.length];
+        colorIndex++;
+        for (var i = 0; i < 3; i++) {
+          var p = projectedPoints[triangle[i]];
+          var alreadyDrawn = 0;
+          if (drawnVertexIndices.containsKey(p)) {
+            alreadyDrawn = drawnVertexIndices[p]!;
+            drawnVertexIndices[p] = alreadyDrawn + 1;
+          } else {
+            drawnVertexIndices[p] = 1;
+          }
+          var numberSize = const ui.Offset(8, 15);
+          var numberPos = ui.Offset(p.x, p.y + alreadyDrawn * (numberSize.dy + 1));
+          drawing.drawNumber(i, numberPos, digitSize: numberSize, spacing: 1, outlineColor: color);
+        }
       }
     }
   }
