@@ -35,16 +35,16 @@ class Cuboid extends Mesh {
     triangles = [
       [0, 1, 2],
       [0, 2, 3],
-      [4, 0, 3],
-      [4, 3, 7],
-      [5, 4, 7],
-      [5, 7, 6],
-      [1, 5, 6],
-      [1, 6, 2],
-      [4, 5, 1],
-      [4, 1, 0],
-      [3, 2, 6],
-      [3, 6, 7],
+      [4, 6, 5],
+      [4, 7, 6],
+      [8, 10, 9],
+      [8, 11, 10],
+      [12, 13, 14],
+      [12, 14, 15],
+      [16, 18, 17],
+      [16, 19, 18],
+      [20, 21, 22],
+      [20, 22, 23],
     ];
 
     normals = [
@@ -77,32 +77,26 @@ class Cuboid extends Mesh {
     transform.position = position;
 
     uv = [
-    //   front face
       Vector2(0, 0),
       Vector2(1, 0),
       Vector2(1, 1),
       Vector2(0, 1),
-    //   back face
-      Vector2(0, 0),
       Vector2(1, 0),
+      Vector2(0, 0),
+      Vector2(0, 1),
       Vector2(1, 1),
       Vector2(0, 1),
-    //   top face
-      Vector2(0, 0),
+      Vector2(1, 1),
       Vector2(1, 0),
+      Vector2(0, 0),
       Vector2(1, 1),
       Vector2(0, 1),
-    //   bottom face
       Vector2(0, 0),
       Vector2(1, 0),
-      Vector2(1, 1),
-      Vector2(0, 1),
-    //   right face
-      Vector2(0, 0),
       Vector2(1, 0),
-      Vector2(1, 1),
+      Vector2(0, 0),
       Vector2(0, 1),
-    //   left face
+      Vector2(1, 1),
       Vector2(0, 0),
       Vector2(1, 0),
       Vector2(1, 1),

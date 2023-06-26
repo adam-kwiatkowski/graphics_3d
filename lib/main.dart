@@ -88,8 +88,10 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
     super.initState();
     cylinder = Object3D(Cylinder(widget.radius, widget.height, widget.sides,
         Vector3.zero() - Vector3(0, widget.height / 2, 0)));
-    cube = Object3D(Cuboid(100, 100, 100, Vector3(150, 0, 0)));
-    plane = Object3D(Plane(100, 100, Vector3(100, -100, 0)));
+    cube = Object3D(Cuboid(100, 100, 100, Vector3(150, -100, 0)));
+    plane = Object3D(Plane(100, 100, Vector3(100, -240, 0)));
+
+    cube.mesh.transform.rotation = Vector3(-0.5463, -0.5463, 0);
   }
 
   @override
