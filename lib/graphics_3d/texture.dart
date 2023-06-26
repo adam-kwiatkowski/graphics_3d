@@ -12,6 +12,11 @@ class Texture {
 
   Color getColor(int x, int y) {
     int index = (y * width + x) * 4;
+
+    if (index < 0 || index >= data.length) {
+      return const Color(0x00000000);
+    }
+
     return Color.fromARGB(
         data[index + 3], data[index], data[index + 1], data[index + 2]);
   }

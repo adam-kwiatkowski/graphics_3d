@@ -103,10 +103,6 @@ class MeshTriangle extends Shape {
             barycentric.z * uvs![2].y;
 
         setPixel(x.round(), y.round(), pixels, size, texture!.getUV(uvx, uvy));
-
-        //   for debug paint hue corresponding to uv
-        // setPixel(x.round(), y.round(), pixels, size,
-        //     Color.fromARGB(255, (uvx * 255).round(), (uvy * 255).round(), 0));
       }
     }
   }

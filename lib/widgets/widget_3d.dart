@@ -223,7 +223,7 @@ Future<ui.Image> renderDrawing(
             object.mesh.uv[triangle[0]],
             object.mesh.uv[triangle[1]],
             object.mesh.uv[triangle[2]]
-          ]),
+          ], outlineColor: Colors.transparent),
         );
       } else {
         drawing.drawShape(makeTriangle(projectedPoints[triangle[0]],

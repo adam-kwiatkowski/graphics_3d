@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Container(
             constraints: const BoxConstraints.expand(),
             child: TexturedCylinder(
-                radius: 80, height: 400, sides: 10, otherObjects: objects)),
+                radius: 80, height: 300, sides: 40, otherObjects: objects)),
       ),
     );
   }
@@ -87,10 +87,11 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
   void initState() {
     super.initState();
     cylinder = Object3D(Cylinder(widget.radius, widget.height, widget.sides,
-        Vector3.zero() - Vector3(0, widget.height / 2, 0)));
-    cube = Object3D(Cuboid(100, 100, 100, Vector3(150, -100, 0)));
+        Vector3(100, -150, -200)));
+    cube = Object3D(Cuboid(100, 100, 100, Vector3(320, -200, 0)));
     plane = Object3D(Plane(100, 100, Vector3(100, -240, 0)));
 
+    cylinder.mesh.transform.rotation = Vector3(-0.58, 2.28, 0);
     cube.mesh.transform.rotation = Vector3(-0.5463, -0.5463, 0);
   }
 
@@ -127,7 +128,7 @@ class _TexturedCylinderState extends State<TexturedCylinder> {
         });
       },
       child: Renderer3D(objects: widget.otherObjects + [
-        // cylinder,
+        cylinder,
         cube,
         plane
       ]),
