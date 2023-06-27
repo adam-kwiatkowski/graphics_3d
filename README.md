@@ -1,16 +1,6 @@
-# graphics_3d
+# 3D Graphics
 
-3D transformations rendering in flutter.
+Rendering textured planes, cubes, cylinders made from scratch in Flutter. This project is a part of Computer Graphics coursework.
 
-## Getting Started
+<img width="929" alt="image" src="https://github.com/adam-kwiatkowski/graphics_3d/assets/22380943/c6e7c57a-f895-4cb8-94ad-1c800e0522e9">
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
